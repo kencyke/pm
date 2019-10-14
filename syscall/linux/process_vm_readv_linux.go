@@ -36,13 +36,18 @@ func errnoErr(e unix.Errno) error {
 }
 
 // ProcessVMReadv transfers data from the remote process to the local process.
-func ProcessVMReadv(pid int, liov []Iovec, liovcnt uint64, riov []Iovec, riovcnt uint64, flags uint64) (size int, err error) {
+func ProcessVMReadv(pid int, liov []Iovec, liovcnt uint, riov []Iovec, riovcnt uint, flags uint) (size int, err error) {
+	var _zero uintptr
 	var lp, rp unsafe.Pointer
 	if len(liov) > 0 {
 		lp = unsafe.Pointer(&liov[0])
+	} else {
+		lp = unsafe.Pointer(&_zero)
 	}
 	if len(riov) > 0 {
 		rp = unsafe.Pointer(&riov[0])
+	} else {
+		rp = unsafe.Pointer(&_zero)
 	}
 	r0, _, e1 := unix.Syscall6(
 		unix.SYS_PROCESS_VM_READV,
